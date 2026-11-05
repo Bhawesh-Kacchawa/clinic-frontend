@@ -7,4 +7,6 @@ export interface SessionAvailability {
   timing: string;
   slotsLeft: number;
   status: SessionStatus;
+  bookingOpensAt?: string;
+  serverTime?: string;
 }
