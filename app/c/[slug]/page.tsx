@@ -1,5 +1,7 @@
 import { apiFetch } from "@/lib/api";
+import { toSessionAvailability } from "@/lib/sessions";
 import { SessionCards } from "@/components/SessionCards";
+import type { ClinicSessionsResponse } from "@/types/bookings";
 import type { SessionAvailability } from "@/types/sessions";
 
 export default async function ClinicSessionsPage({
@@ -8,12 +10,15 @@ export default async function ClinicSessionsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  let sessions: SessionAvailability[];
+  let sessions: SessionAvailability[] = [];
   let loadError: string | null = null;
 
   try {
-    const query = new URLSearchParams({ slug });
-    sessions = await apiFetch<SessionAvailability[]>(`/sessions?${query}`);
+    const response = await apiFetch<ClinicSessionsResponse>(
+      `/api/public/clinics/${encodeURIComponent(slug)}/sessions`,
+      { cache: "no-store" },
+    );
+    sessions = toSessionAvailability(response);
   } catch (error) {
     loadError =
       error instanceof Error ? error.message : "Unable to load sessions.";
@@ -30,6 +35,12 @@ export default async function ClinicSessionsPage({
           Choose a time
         </h1>
         <p className="mt-3 text-slate-600">{slug}</p>
+        <a
+          href={`/c/${encodeURIComponent(slug)}/bookings`}
+          className="mt-5 inline-flex text-sm font-semibold text-cyan-800 underline underline-offset-4"
+        >
+          View today&apos;s clinic bookings
+        </a>
 
         {loadError ? (
           <p

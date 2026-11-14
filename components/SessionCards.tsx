@@ -4,6 +4,8 @@ import { useCallback, useRef, useState } from "react";
 import { BookingFormModal } from "@/components/BookingFormModal";
 import { BookingCountdown } from "@/components/BookingCountdown";
 import { apiFetch } from "@/lib/api";
+import { toSessionAvailability } from "@/lib/sessions";
+import type { ClinicSessionsResponse } from "@/types/bookings";
 import type {
   SessionAvailability,
   SessionName,
@@ -35,7 +37,8 @@ export function SessionCards({
 }) {
   const [sessions, setSessions] = useState(initialSessions);
   const [refreshError, setRefreshError] = useState<string | null>(null);
-  const [bookingSession, setBookingSession] = useState<SessionName | null>(null);
+  const [bookingSession, setBookingSession] =
+    useState<SessionAvailability | null>(null);
   const refreshInProgress = useRef(false);
 
   const refreshSessions = useCallback(async () => {
@@ -45,12 +48,11 @@ export function SessionCards({
 
     refreshInProgress.current = true;
     try {
-      const query = new URLSearchParams({ slug });
-      const refreshedSessions = await apiFetch<SessionAvailability[]>(
-        `/sessions?${query}`,
+      const response = await apiFetch<ClinicSessionsResponse>(
+        `/api/public/clinics/${encodeURIComponent(slug)}/sessions`,
         { cache: "no-store" },
       );
-      setSessions(refreshedSessions);
+      setSessions(toSessionAvailability(response));
       setRefreshError(null);
     } catch (error) {
       setRefreshError(
@@ -104,7 +106,7 @@ export function SessionCards({
                   {session.status === "open" && session.slotsLeft > 0 && (
                     <button
                       type="button"
-                      onClick={() => setBookingSession(name)}
+                      onClick={() => setBookingSession(session)}
                       className="mt-5 rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
                     >
                       Book this session
@@ -131,8 +133,8 @@ export function SessionCards({
       </div>
       {bookingSession && (
         <BookingFormModal
-          clinicSlug={slug}
-          sessionName={bookingSession}
+          sessionId={bookingSession.sessionId}
+          sessionName={bookingSession.name}
           open
           onClose={() => setBookingSession(null)}
         />

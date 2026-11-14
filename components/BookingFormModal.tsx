@@ -21,17 +21,18 @@ const bookingSchema = z.object({
   phone: z
     .string()
     .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number."),
+  reason: z.string().trim().max(500, "Reason must be 500 characters or fewer."),
 });
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
 
 export function BookingFormModal({
-  clinicSlug,
+  sessionId,
   sessionName,
   open,
   onClose,
 }: {
-  clinicSlug: string;
+  sessionId: string;
   sessionName: SessionName;
   open: boolean;
   onClose: () => void;
@@ -46,7 +47,7 @@ export function BookingFormModal({
     formState: { errors, isSubmitting },
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: { patientName: "", phone: "" },
+    defaultValues: { patientName: "", phone: "", reason: "" },
   });
 
   useEffect(() => {
@@ -62,14 +63,18 @@ export function BookingFormModal({
     }
   }, [open, reset]);
 
-  const onSubmit = handleSubmit(async ({ patientName, phone }) => {
+  const onSubmit = handleSubmit(async ({ patientName, phone, reason }) => {
     setSubmitError(null);
     try {
+      if (!sessionId) {
+        throw new Error("This session is missing its booking ID. Please refresh and try again.");
+      }
+
       const request: CreateBookingRequest = {
-        clinicSlug,
+        sessionId,
         patientName,
         phone,
-        session: sessionName,
+        ...(reason ? { reason } : {}),
       };
       const result = await apiFetch<CreateBookingResponse>(
         "/api/public/bookings",
@@ -199,6 +204,34 @@ export function BookingFormModal({
             )}
           </div>
 
+          <div>
+            <label
+              htmlFor="booking-reason"
+              className="mb-2 block text-sm font-medium text-slate-700"
+            >
+              Reason for visit <span className="font-normal text-slate-500">(optional)</span>
+            </label>
+            <textarea
+              id="booking-reason"
+              rows={3}
+              maxLength={500}
+              {...register("reason")}
+              aria-invalid={Boolean(errors.reason)}
+              aria-describedby={errors.reason ? "booking-reason-error" : undefined}
+              className="w-full resize-y rounded-xl border border-slate-300 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 aria-invalid:border-rose-500"
+              placeholder="Briefly describe what you need help with"
+            />
+            {errors.reason && (
+              <p
+                id="booking-reason-error"
+                role="alert"
+                className="mt-2 text-sm text-rose-700"
+              >
+                {errors.reason.message}
+              </p>
+            )}
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
@@ -237,6 +270,12 @@ function getBookingErrorMessage(error: unknown): string {
   }
   if (error instanceof ApiError && error.status === 409) {
     return "This session is no longer available. Please refresh the page and try again.";
+  }
+  if (error instanceof ApiError) {
+    return `Booking failed (${error.status}): ${error.message}`;
+  }
+  if (error instanceof Error) {
+    return `We couldn't reach the booking service: ${error.message}`;
   }
   return "We couldn't complete your booking right now. Please try again.";
 }

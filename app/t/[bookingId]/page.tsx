@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BookingLiveStatus } from "@/components/BookingLiveStatus";
 import { apiFetch } from "@/lib/api";
 import type { BookingDetails } from "@/types/bookings";
 
@@ -51,24 +50,63 @@ export default async function BookingConfirmationPage({
               {booking.tokenNumber}
             </p>
 
-            <dl className="mt-8 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left">
-              <div className="flex justify-between gap-4 px-5 py-4">
-                <dt className="text-slate-500">Patient</dt>
-                <dd className="text-right font-medium text-slate-900">
-                  {booking.patientName}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-4 px-5 py-4">
-                <dt className="text-slate-500">Session</dt>
-                <dd className="text-right font-medium text-slate-900">
-                  {booking.session}
-                </dd>
-              </div>
-            </dl>
-            <BookingLiveStatus
-              bookingId={bookingId}
-              initialPatientsAhead={booking.patientsAhead}
-            />
+            {(booking.patientName ||
+              booking.session ||
+              booking.status ||
+              booking.nowServing != null ||
+              booking.patientsAhead != null ||
+              booking.estimatedTimeMinutes != null) && (
+              <dl className="mt-8 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left">
+                {booking.patientName && (
+                  <div className="flex justify-between gap-4 px-5 py-4">
+                    <dt className="text-slate-500">Patient</dt>
+                    <dd className="text-right font-medium text-slate-900">
+                      {booking.patientName}
+                    </dd>
+                  </div>
+                )}
+                {booking.session && (
+                  <div className="flex justify-between gap-4 px-5 py-4">
+                    <dt className="text-slate-500">Session</dt>
+                    <dd className="text-right font-medium text-slate-900">
+                      {booking.session}
+                    </dd>
+                  </div>
+                )}
+                {booking.status && (
+                  <div className="flex justify-between gap-4 px-5 py-4">
+                    <dt className="text-slate-500">Status</dt>
+                    <dd className="text-right font-medium text-slate-900">
+                      {booking.status}
+                    </dd>
+                  </div>
+                )}
+                {booking.nowServing != null && (
+                  <div className="flex justify-between gap-4 px-5 py-4">
+                    <dt className="text-slate-500">Now serving</dt>
+                    <dd className="text-right font-medium text-slate-900">
+                      {booking.nowServing}
+                    </dd>
+                  </div>
+                )}
+                {booking.patientsAhead != null && (
+                  <div className="flex justify-between gap-4 px-5 py-4">
+                    <dt className="text-slate-500">Patients ahead</dt>
+                    <dd className="text-right font-medium text-slate-900">
+                      {booking.patientsAhead}
+                    </dd>
+                  </div>
+                )}
+                {booking.estimatedTimeMinutes != null && (
+                  <div className="flex justify-between gap-4 px-5 py-4">
+                    <dt className="text-slate-500">Estimated wait</dt>
+                    <dd className="text-right font-medium text-slate-900">
+                      {booking.estimatedTimeMinutes} min
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            )}
             <p className="mt-6 text-sm leading-6 text-slate-500">
               Keep your token number handy for your visit.
             </p>

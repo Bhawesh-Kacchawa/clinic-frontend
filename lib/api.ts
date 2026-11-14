@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -29,11 +29,9 @@ export async function apiFetch<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {
-  if (!API_URL) {
-    throw new Error("NEXT_PUBLIC_API_URL must be set before making API requests.");
-  }
-
-  const url = `${API_URL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+  const baseUrl =
+    typeof window === "undefined" ? API_URL : "/api/proxy";
+  const url = `${baseUrl.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
   const response = await fetch(url, {

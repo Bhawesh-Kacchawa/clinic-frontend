@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-16">
@@ -6,12 +8,26 @@ export default function Home() {
           Dental Frontend
         </p>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-          Your app is ready.
+          Book your dental visit
         </h1>
         <p className="mt-4 max-w-xl leading-7 text-slate-600">
-          Start building your dental care experience with Next.js, TypeScript,
-          and Tailwind CSS.
+          Choose a session at Demo Dental, reserve your place, and keep track of
+          your token and queue status.
         </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/c/demo-dental"
+            className="rounded-xl bg-cyan-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
+          >
+            View sessions
+          </Link>
+          <Link
+            href="/c/demo-dental/bookings"
+            className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
+          >
+            Today&apos;s clinic bookings
+          </Link>
+        </div>
       </section>
     </main>
   );
