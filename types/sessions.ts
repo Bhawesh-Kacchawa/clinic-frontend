@@ -1,6 +1,6 @@
 export type SessionName = "Morning" | "Evening";
 
-export type SessionStatus = "opens-soon" | "open" | "full" | "closed";
+export type SessionStatus = "opens-soon" | "open" | "paused" | "full" | "closed";
 
 export interface SessionAvailability {
   sessionId: string;

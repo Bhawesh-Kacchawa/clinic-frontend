@@ -21,15 +21,19 @@ export function toSessionAvailability(
       ? Date.parse(session.bookingOpensAt)
       : Number.NaN;
     const serverTime = Date.parse(response.serverTime);
-    const status = slotsLeft === 0
-      ? "full"
-      : Number.isFinite(opensAt) &&
-          Number.isFinite(serverTime) &&
-          opensAt > serverTime
-        ? "opens-soon"
-        : session.bookingStatus.toUpperCase() === "CLOSED"
+    const bookingStatus = session.bookingStatus.toUpperCase();
+    const status =
+      bookingStatus === "CLOSED"
           ? "closed"
-          : "open";
+          : bookingStatus === "PAUSED"
+            ? "paused"
+            : slotsLeft === 0
+              ? "full"
+              : Number.isFinite(opensAt) &&
+                  Number.isFinite(serverTime) &&
+                  opensAt > serverTime
+                ? "opens-soon"
+                : "open";
 
     return [{
       sessionId: session.type.toUpperCase(),

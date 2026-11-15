@@ -17,6 +17,7 @@ const sessionOrder: SessionName[] = ["Morning", "Evening"];
 const statusLabels: Record<SessionStatus, string> = {
   "opens-soon": "Opens soon",
   open: "Open",
+  paused: "Paused",
   full: "Full",
   closed: "Closed",
 };
@@ -24,6 +25,7 @@ const statusLabels: Record<SessionStatus, string> = {
 const statusStyles: Record<SessionStatus, string> = {
   "opens-soon": "bg-amber-100 text-amber-800",
   open: "bg-emerald-100 text-emerald-800",
+  paused: "bg-amber-100 text-amber-800",
   full: "bg-slate-100 text-slate-700",
   closed: "bg-rose-100 text-rose-800",
 };

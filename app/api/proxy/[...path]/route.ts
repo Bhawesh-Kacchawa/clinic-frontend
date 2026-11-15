@@ -36,21 +36,55 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
     path[1] === "clinics" &&
     path[3] === "bookings" &&
     path[4].length > 0;
+  const isClinicSessionCreate =
+    request.method === "POST" &&
+    path.length === 4 &&
+    path[0] === "api" &&
+    path[1] === "clinics" &&
+    path[3] === "sessions";
+  const isClinicSessionUpdate =
+    request.method === "PUT" &&
+    path.length === 5 &&
+    path[0] === "api" &&
+    path[1] === "clinics" &&
+    path[3] === "sessions" &&
+    ["MORNING", "EVENING"].includes(path[4].toUpperCase());
+  const isClinicSessionStatusUpdate =
+    request.method === "PATCH" &&
+    path.length === 6 &&
+    path[0] === "api" &&
+    path[1] === "clinics" &&
+    path[3] === "sessions" &&
+    ["MORNING", "EVENING"].includes(path[4].toUpperCase()) &&
+    path[5] === "status";
+  const isClinicSessionManagement =
+    isClinicSessionCreate ||
+    isClinicSessionUpdate ||
+    isClinicSessionStatusUpdate;
 
   if (
     !isBookingCreate &&
     !isBookingLookup &&
     !isClinicSessions &&
     !isClinicBookings &&
-    !isClinicBookingDelete
+    !isClinicBookingDelete &&
+    !isClinicSessionManagement
   ) {
     return Response.json({ message: "Not found." }, { status: 404 });
+  }
+
+  const headers = new Headers({ Accept: "application/json" });
+  if (isClinicSessionManagement) {
+    const token = request.cookies.get("access_token")?.value;
+    if (!token) {
+      return Response.json({ message: "Authentication required." }, { status: 401 });
+    }
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const upstreamUrl = `${API_URL.replace(/\/+$/, "")}/${path
     .map(encodeURIComponent)
     .join("/")}${request.nextUrl.search}`;
-  const headers = new Headers({ Accept: "application/json" });
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("Content-Type", contentType);
 
@@ -75,4 +109,6 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
 
 export const GET = proxy;
 export const POST = proxy;
+export const PUT = proxy;
+export const PATCH = proxy;
 export const DELETE = proxy;
