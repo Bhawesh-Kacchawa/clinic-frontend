@@ -29,12 +29,20 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
     path[0] === "api" &&
     path[1] === "clinics" &&
     path[3] === "bookings";
+  const isClinicBookingDelete =
+    request.method === "DELETE" &&
+    path.length === 5 &&
+    path[0] === "api" &&
+    path[1] === "clinics" &&
+    path[3] === "bookings" &&
+    path[4].length > 0;
 
   if (
     !isBookingCreate &&
     !isBookingLookup &&
     !isClinicSessions &&
-    !isClinicBookings
+    !isClinicBookings &&
+    !isClinicBookingDelete
   ) {
     return Response.json({ message: "Not found." }, { status: 404 });
   }
@@ -67,3 +75,4 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
 
 export const GET = proxy;
 export const POST = proxy;
+export const DELETE = proxy;

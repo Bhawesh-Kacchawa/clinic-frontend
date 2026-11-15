@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
+import { ClinicBookingsTable } from "@/components/ClinicBookingsTable";
 import type { DailyBooking } from "@/types/bookings";
+
+export const dynamic = "force-dynamic";
 
 export default async function ClinicBookingsPage({
   params,
@@ -44,36 +47,7 @@ export default async function ClinicBookingsPage({
             There are no bookings for today.
           </p>
         ) : (
-          <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <table className="w-full min-w-[640px] divide-y divide-slate-200 text-left">
-              <thead className="bg-slate-50 text-sm text-slate-600">
-                <tr>
-                  <th scope="col" className="px-5 py-3 font-semibold">Token</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Patient</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Phone</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Session</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Status</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Reason</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm">
-                {bookings.map((booking, index) => (
-                  <tr key={booking.bookingId ?? `${booking.patientName}-${index}`}>
-                    <td className="px-5 py-4 font-semibold text-slate-900">
-                      {booking.tokenNo ?? booking.tokenNumber ?? "—"}
-                    </td>
-                    <td className="px-5 py-4 text-slate-900">{booking.patientName}</td>
-                    <td className="px-5 py-4 text-slate-600">{booking.phone ?? "—"}</td>
-                    <td className="px-5 py-4 text-slate-600">
-                      {booking.session?.type ?? "—"}
-                    </td>
-                    <td className="px-5 py-4 text-slate-600">{booking.status ?? "—"}</td>
-                    <td className="px-5 py-4 text-slate-600">{booking.reason ?? "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ClinicBookingsTable slug={slug} initialBookings={bookings} />
         )}
 
         <Link

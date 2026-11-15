@@ -27,13 +27,16 @@ export interface DailyBooking {
   tokenNumber?: string | number;
   patientName: string;
   phone?: string;
-  session?: {
-    sessionId: string;
-    type: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-  };
+  sessionType?: string;
+  session?:
+    | string
+    | {
+        sessionId: string;
+        type: string;
+        date: string;
+        startTime: string;
+        endTime: string;
+      };
   reason?: string;
   status?: string;
 }
