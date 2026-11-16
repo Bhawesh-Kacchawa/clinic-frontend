@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DashboardSessions } from "@/components/DashboardSessions";
 
 export default function DashboardSessionsPage() {
@@ -14,6 +15,12 @@ export default function DashboardSessionsPage() {
           Create or edit clinic hours and manage booking availability for each
           session.
         </p>
+        <Link
+          href="/dashboard/queue"
+          className="mt-4 inline-flex text-sm font-semibold text-cyan-800 underline underline-offset-4"
+        >
+          Manage patient queue
+        </Link>
         <DashboardSessions />
       </section>
     </main>

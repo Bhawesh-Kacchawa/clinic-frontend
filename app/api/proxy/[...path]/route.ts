@@ -61,6 +61,23 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
     isClinicSessionCreate ||
     isClinicSessionUpdate ||
     isClinicSessionStatusUpdate;
+  const isQueueBookingStatusUpdate =
+    request.method === "PATCH" &&
+    path.length === 6 &&
+    path[0] === "api" &&
+    path[1] === "clinics" &&
+    path[3] === "bookings" &&
+    path[4].length > 0 &&
+    path[5] === "status";
+  const isQueueSessionAction =
+    request.method === "POST" &&
+    path.length === 6 &&
+    path[0] === "api" &&
+    path[1] === "clinics" &&
+    path[3] === "sessions" &&
+    ["MORNING", "EVENING"].includes(path[4].toUpperCase()) &&
+    ["call-next", "undo"].includes(path[5]);
+  const isQueueAction = isQueueBookingStatusUpdate || isQueueSessionAction;
 
   if (
     !isBookingCreate &&
@@ -68,15 +85,16 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
     !isClinicSessions &&
     !isClinicBookings &&
     !isClinicBookingDelete &&
-    !isClinicSessionManagement
+    !isClinicSessionManagement &&
+    !isQueueAction
   ) {
     return Response.json({ message: "Not found." }, { status: 404 });
   }
 
   const headers = new Headers({ Accept: "application/json" });
-  if (isClinicSessionManagement) {
+  if (isClinicSessionManagement || isQueueAction || isClinicBookings) {
     const token = request.cookies.get("access_token")?.value;
-    if (!token) {
+    if (!token && (isClinicSessionManagement || isQueueAction)) {
       return Response.json({ message: "Authentication required." }, { status: 401 });
     }
     headers.set("Authorization", `Bearer ${token}`);

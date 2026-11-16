@@ -15,6 +15,7 @@ The app currently provides:
 - `/login` — sign in to the clinic dashboard.
 - `/dashboard` — protected by an HTTP-only authentication cookie.
 - `/dashboard/sessions` — create/edit Morning and Evening sessions and manage booking status.
+- `/dashboard/queue` — manage and monitor the selected session's patient queue.
 - `/c/demo-dental` — today's sessions and booking availability.
 - `/c/demo-dental/bookings` — today's clinic booking list.
 - `/t/{bookingId}` — a booking's token and queue details.
@@ -31,3 +32,11 @@ load current sessions, `POST /api/clinics/demo-dental/sessions` to create one,
 `PATCH /api/clinics/demo-dental/sessions/{MORNING|EVENING}/status` with a
 `bookingStatus` of `OPEN`, `PAUSED`, or `CLOSED` to update booking availability.
 Management requests forward the JWT as a bearer token on the server.
+
+The queue page reads clinic bookings and refreshes every 10 seconds. Queue
+actions use `POST /api/clinics/demo-dental/sessions/{MORNING|EVENING}/call-next`
+and `/undo`, and update individual bookings with
+`PATCH /api/clinics/demo-dental/bookings/{bookingId}/status` using a `status`
+of `SERVING`, `SKIPPED`, `WAITING`, or `NO_SHOW`. Walk-ins use the existing
+`POST /api/public/bookings` request shape. The queue-management endpoints should
+require the JWT; the proxy forwards it from the HTTP-only cookie.
