@@ -13,9 +13,9 @@ npm run dev
 The app currently provides:
 
 - `/login` — sign in to the clinic dashboard.
-- `/dashboard` — protected by an HTTP-only authentication cookie.
-- `/dashboard/sessions` — create/edit Morning and Evening sessions and manage booking status.
+- `/dashboard/sessions` — the post-login destination; create/edit Morning and Evening sessions and manage booking status.
 - `/dashboard/queue` — manage and monitor the selected session's patient queue.
+- `/dashboard/patients` — view patient bookings by date.
 - `/dashboard/patient-display` — staff-authenticated, read-only queue display for patients.
 - `/c/demo-dental` — today's sessions and booking availability.
 - `/c/demo-dental/bookings` — today's clinic booking list.
@@ -33,6 +33,9 @@ load current sessions, `POST /api/clinics/demo-dental/sessions` to create one,
 `PATCH /api/clinics/demo-dental/sessions/{MORNING|EVENING}/status` with a
 `bookingStatus` of `OPEN`, `PAUSED`, or `CLOSED` to update booking availability.
 Management requests forward the JWT as a bearer token on the server.
+
+The patient list uses `GET /api/staff/bookings?date=YYYY-MM-DD` with the staff
+JWT. It defaults to today's date in the clinic's Asia/Kolkata time zone.
 
 The queue page reads clinic bookings and refreshes every 10 seconds. Queue
 actions use `POST /api/clinics/demo-dental/sessions/{MORNING|EVENING}/call-next`

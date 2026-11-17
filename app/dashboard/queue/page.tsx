@@ -27,6 +27,12 @@ export default function DashboardQueuePage() {
           >
             Open patient display
           </Link>
+          <Link
+            href="/dashboard/patients"
+            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
+          >
+            View patients
+          </Link>
         </div>
         <DashboardQueue />
       </section>

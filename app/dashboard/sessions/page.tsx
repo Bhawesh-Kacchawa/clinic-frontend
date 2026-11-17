@@ -15,12 +15,20 @@ export default function DashboardSessionsPage() {
           Create or edit clinic hours and manage booking availability for each
           session.
         </p>
-        <Link
-          href="/dashboard/queue"
-          className="mt-4 inline-flex text-sm font-semibold text-cyan-800 underline underline-offset-4"
-        >
-          Manage patient queue
-        </Link>
+        <div className="mt-4 flex flex-wrap gap-4">
+          <Link
+            href="/dashboard/queue"
+            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
+          >
+            Manage patient queue
+          </Link>
+          <Link
+            href="/dashboard/patients"
+            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
+          >
+            View patients
+          </Link>
+        </div>
         <DashboardSessions />
       </section>
     </main>
