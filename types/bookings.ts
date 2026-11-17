@@ -44,6 +44,7 @@ export interface DailyBooking {
 export interface ClinicSessionsResponse {
   serverTime: string;
   sessions: Array<{
+    id: string;
     type: string;
     startTime: string;
     endTime: string;

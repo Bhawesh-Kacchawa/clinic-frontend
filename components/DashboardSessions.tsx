@@ -16,6 +16,7 @@ type SessionForm = {
 };
 
 type ManagedSession = SessionForm & {
+  id: string;
   type: SessionName;
   bookingStatus: string;
   bookedCount: number;
@@ -86,6 +87,7 @@ export function DashboardSessions() {
           const type = sessionName(session.type);
           if (!type) return [];
           return [{
+            id: session.id,
             type,
             startTime: session.startTime.slice(0, 5),
             endTime: session.endTime.slice(0, 5),
@@ -157,6 +159,7 @@ export function DashboardSessions() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type: name.toUpperCase(),
+            ...(session ? { id: session.id } : {}),
             ...toPayload(form),
           }),
         },
@@ -187,7 +190,10 @@ export function DashboardSessions() {
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ bookingStatus }),
+          body: JSON.stringify({
+            bookingStatus,
+            id: sessions.find((item) => item.type === name)?.id,
+          }),
         },
       );
       setNotice(`${name} bookings ${bookingStatus.toLowerCase()}.`);

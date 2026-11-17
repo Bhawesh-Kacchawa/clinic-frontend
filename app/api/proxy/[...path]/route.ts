@@ -94,22 +94,87 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
   const headers = new Headers({ Accept: "application/json" });
   if (isClinicSessionManagement || isQueueAction || isClinicBookings) {
     const token = request.cookies.get("access_token")?.value;
-    if (!token && (isClinicSessionManagement || isQueueAction)) {
+    if (!token && (isClinicSessionManagement || isQueueAction || isClinicBookings)) {
       return Response.json({ message: "Authentication required." }, { status: 401 });
     }
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const upstreamUrl = `${API_URL.replace(/\/+$/, "")}/${path
-    .map(encodeURIComponent)
-    .join("/")}${request.nextUrl.search}`;
+  let method = request.method;
+  let requestBody: string | undefined =
+    request.method === "GET" ? undefined : await request.text();
+  let queueActionPath: string | null = null;
+  if (isQueueBookingStatusUpdate) {
+    const actions: Record<string, string> = {
+      SERVING: "call",
+      SKIPPED: "skip",
+      WAITING: "requeue",
+      NO_SHOW: "no-show",
+    };
+    let status = "";
+    try {
+      status = String(JSON.parse(requestBody || "{}").status ?? "").toUpperCase();
+    } catch {}
+    const action = actions[status];
+    if (!action) {
+      return Response.json({ message: "Unsupported status." }, { status: 400 });
+    }
+    const id = encodeURIComponent(path[4]);
+    queueActionPath =
+      action === "call"
+        ? `api/staff/queue/call/${id}`
+        : `api/staff/queue/${id}/${action}`;
+    method = "POST";
+    requestBody = undefined;
+  }
+
+  let sessionPath: string | null = null;
+  if (isClinicSessionManagement) {
+    let body: Record<string, unknown> = {};
+    try {
+      body = JSON.parse(requestBody || "{}");
+    } catch {
+      return Response.json({ message: "Invalid JSON body." }, { status: 400 });
+    }
+    if (isClinicSessionCreate) {
+      sessionPath = "api/staff/sessions";
+      body = {
+        date: new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+        }).format(new Date()),
+        avgMinutes: 15,
+        bookingOpensAt: new Date().toISOString(),
+        ...body,
+      };
+    } else {
+      if (typeof body.id !== "string" || !body.id) {
+        return Response.json({ message: "Session id is required." }, { status: 400 });
+      }
+      if (isClinicSessionUpdate) {
+        sessionPath = "api/staff/sessions";
+        method = "PATCH";
+      } else {
+        sessionPath = `api/staff/sessions/${encodeURIComponent(body.id)}/status`;
+        body = { action: body.bookingStatus };
+      }
+    }
+    requestBody = JSON.stringify(body);
+  }
+
+  const upstreamPath =
+    queueActionPath ??
+    sessionPath ??
+    (isClinicBookings
+      ? "api/staff/bookings"
+      : path.map(encodeURIComponent).join("/"));
+  const upstreamUrl = `${API_URL.replace(/\/+$/, "")}/${upstreamPath}${request.nextUrl.search}`;
   const contentType = request.headers.get("content-type");
-  if (contentType) headers.set("Content-Type", contentType);
+  if (contentType && !queueActionPath) headers.set("Content-Type", contentType);
 
   const upstream = await fetch(upstreamUrl, {
-    method: request.method,
+    method,
     headers,
-    body: request.method === "GET" ? undefined : await request.text(),
+    body: requestBody,
     cache: "no-store",
   });
 

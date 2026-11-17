@@ -27,6 +27,12 @@ export default function Home() {
           >
             Today&apos;s clinic bookings
           </Link>
+          <Link
+            href="/login"
+            className="rounded-xl border border-cyan-200 bg-cyan-50 px-5 py-3 text-sm font-semibold text-cyan-800 transition hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
+          >
+            Staff login
+          </Link>
         </div>
       </section>
     </main>

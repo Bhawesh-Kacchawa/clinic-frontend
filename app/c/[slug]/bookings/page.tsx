@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { apiFetch } from "@/lib/api";
 import { ClinicBookingsTable } from "@/components/ClinicBookingsTable";
 import type { DailyBooking } from "@/types/bookings";
@@ -16,8 +17,13 @@ export default async function ClinicBookingsPage({
 
   try {
     bookings = await apiFetch<DailyBooking[]>(
-      `/api/clinics/${encodeURIComponent(slug)}/bookings`,
-      { cache: "no-store" },
+      "/api/staff/bookings",
+      {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${(await cookies()).get("access_token")?.value ?? ""}`,
+        },
+      },
     );
   } catch (error) {
     loadError =
