@@ -14,12 +14,20 @@ export default function DashboardQueuePage() {
         <p className="mt-3 text-slate-600">
           Manage patient calls and attendance for the selected session.
         </p>
-        <Link
-          href="/dashboard/sessions"
-          className="mt-4 inline-flex text-sm font-semibold text-cyan-800 underline underline-offset-4"
-        >
-          Manage sessions
-        </Link>
+        <div className="mt-4 flex flex-wrap gap-4">
+          <Link
+            href="/dashboard/sessions"
+            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
+          >
+            Manage sessions
+          </Link>
+          <Link
+            href="/dashboard/patient-display"
+            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
+          >
+            Open patient display
+          </Link>
+        </div>
         <DashboardQueue />
       </section>
     </main>
