@@ -4,6 +4,16 @@ import { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import type { DailyBooking } from "@/types/bookings";
 
+function maskPhoneNumber(phone?: string) {
+  if (!phone) return "—";
+
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "—";
+  if (digits.length <= 6) return "*".repeat(digits.length);
+
+  return `${digits.slice(0, 2)}${"*".repeat(digits.length - 6)}${digits.slice(-4)}`;
+}
+
 export function ClinicBookingsTable({
   slug,
   initialBookings,
@@ -39,9 +49,6 @@ export function ClinicBookingsTable({
     }
   }
 
-  console.log(bookings);
-
-
   return (
     <>
       {deleteError && (
@@ -61,8 +68,8 @@ export function ClinicBookingsTable({
               <th scope="col" className="px-5 py-3 font-semibold">Phone</th>
               <th scope="col" className="px-5 py-3 font-semibold">Session</th>
               <th scope="col" className="px-5 py-3 font-semibold">Status</th>
-              <th scope="col" className="px-5 py-3 font-semibold">Reason</th>
-              <th scope="col" className="px-5 py-3 font-semibold">Actions</th>
+              {/* <th scope="col" className="px-5 py-3 font-semibold">Reason</th>
+              <th scope="col" className="px-5 py-3 font-semibold">Actions</th> */}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm">
@@ -79,15 +86,17 @@ export function ClinicBookingsTable({
                     {booking.tokenNo ?? booking.tokenNumber ?? "—"}
                   </td>
                   <td className="px-5 py-4 text-slate-900">{booking.patientName}</td>
-                  <td className="px-5 py-4 text-slate-600">{booking.phone ?? "—"}</td>
+                  <td className="px-5 py-4 text-slate-600">
+                    {maskPhoneNumber(booking.phone)}
+                  </td>
                   <td className="px-5 py-4 text-slate-600">
                     {typeof booking.sessionType === "string"
                       ? booking.sessionType
                       : "—"}
                   </td>
                   <td className="px-5 py-4 text-slate-600">{booking.status ?? "—"}</td>
-                  <td className="px-5 py-4 text-slate-600">{booking.reason ?? "—"}</td>
-                  <td className="px-5 py-4">
+                  {/* <td className="px-5 py-4 text-slate-600">{booking.reason ?? "—"}</td> */}
+                  {/* <td className="px-5 py-4">
                     {booking.bookingId ? (
                       <button
                         type="button"
@@ -104,7 +113,7 @@ export function ClinicBookingsTable({
                     ) : (
                       "—"
                     )}
-                  </td>
+                  </td> */}
                 </tr>
               ))
             )}

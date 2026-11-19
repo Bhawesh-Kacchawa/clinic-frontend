@@ -6,6 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ApiError, apiFetch } from "@/lib/api";
+import {
+  formatClinicDate,
+  isTokenAppointment,
+  tokenStorageKey,
+} from "@/lib/patient-bookings";
 import type {
   CreateBookingRequest,
   CreateBookingResponse,
@@ -29,11 +34,13 @@ type BookingFormValues = z.infer<typeof bookingSchema>;
 export function BookingFormModal({
   sessionId,
   sessionName,
+  appointmentDate,
   open,
   onClose,
 }: {
   sessionId: string;
   sessionName: SessionName;
+  appointmentDate: string;
   open: boolean;
   onClose: () => void;
 }) {
@@ -89,6 +96,23 @@ export function BookingFormModal({
         throw new Error("The booking response did not include a booking ID.");
       }
 
+      const appointment = {
+        patientName,
+        sessionName: result.session?.type,
+        date: result.session?.date,
+        startTime: result.session?.startTime,
+        endTime: result.session?.endTime,
+      };
+      if (isTokenAppointment(appointment)) {
+        try {
+          localStorage.setItem(tokenStorageKey(result.bookingId), JSON.stringify(appointment));
+        } catch {
+          console.error("Could not save appointment details on this device.");
+        }
+      } else {
+        console.error("The booking response did not include valid appointment details.");
+      }
+
       router.push(`/t/${encodeURIComponent(result.bookingId)}`);
     } catch (error) {
       setSubmitError(getBookingErrorMessage(error));
@@ -113,6 +137,12 @@ export function BookingFormModal({
           <div>
             <p className="text-sm font-semibold text-cyan-700">
               {sessionName} session
+            </p>
+            <p className="mt-1 text-sm text-slate-600">
+              Appointment date:{" "}
+              <time dateTime={appointmentDate} className="font-medium text-slate-900">
+                {formatClinicDate(appointmentDate)}
+              </time>
             </p>
             <h2
               id="booking-modal-title"

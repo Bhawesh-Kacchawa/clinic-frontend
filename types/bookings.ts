@@ -9,10 +9,18 @@ export interface CreateBookingRequest {
 
 export interface CreateBookingResponse {
   bookingId: string;
+  session?: {
+    type: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+  };
 }
 
 export interface BookingDetails {
-  tokenNumber: string | number;
+  token?: string | number;
+  tokenNo?: string | number;
+  tokenNumber?: string | number;
   patientName?: string;
   session?: SessionName | string;
   status?: BookingStatus;

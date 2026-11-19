@@ -22,6 +22,14 @@ The app currently provides:
 - `/c/demo-dental/bookings` — today's clinic booking list.
 - `/t/{bookingId}` — a booking's token and queue details.
 
+For new bookings, the confirmation page saves the patient name and appointment
+date and session times from the booking response in the booking browser. These
+details and the downloadable text token are unavailable on other devices or for
+older bookings; the token number and queue information still come from the API.
+The downloaded file contains the patient name and should be kept private.
+Saved appointment details are not updated if a session changes, and the text
+file is not proof of booking; staff should verify it against the queue.
+
 The login route sends credentials to `POST /api/auth/login` on the backend
 using `{ "email": "...", "password": "..." }`. The backend should return a
 `token` field containing the JWT; the frontend stores it in an HTTP-only,

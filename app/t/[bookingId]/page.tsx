@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AppointmentToken } from "@/components/AppointmentToken";
 import { apiFetch } from "@/lib/api";
 import type { BookingDetails } from "@/types/bookings";
 
@@ -19,6 +20,7 @@ export default async function BookingConfirmationPage({
   } catch {
     loadError = "We couldn't find this booking. Check the link or try again later.";
   }
+  const tokenNumber = booking?.token ?? booking?.tokenNo ?? booking?.tokenNumber;
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
@@ -44,11 +46,17 @@ export default async function BookingConfirmationPage({
               Your token number
             </h1>
             <p
-              aria-label={`Token number ${booking.tokenNumber}`}
+              aria-label={
+                tokenNumber == null
+                  ? "Token number unavailable"
+                  : `Token number ${tokenNumber}`
+              }
               className="mt-4 text-6xl font-bold tracking-tight text-cyan-800 sm:text-7xl"
             >
-              {booking.tokenNumber}
+              {tokenNumber ?? "—"}
             </p>
+
+            <AppointmentToken bookingId={bookingId} token={tokenNumber} />
 
             {(booking.patientName ||
               booking.session ||

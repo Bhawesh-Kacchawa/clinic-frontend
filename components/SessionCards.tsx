@@ -32,9 +32,11 @@ const statusStyles: Record<SessionStatus, string> = {
 
 export function SessionCards({
   slug,
+  appointmentDate,
   initialSessions,
 }: {
   slug: string;
+  appointmentDate: string;
   initialSessions: SessionAvailability[];
 }) {
   const [sessions, setSessions] = useState(initialSessions);
@@ -137,6 +139,7 @@ export function SessionCards({
         <BookingFormModal
           sessionId={bookingSession.sessionId}
           sessionName={bookingSession.name}
+          appointmentDate={appointmentDate}
           open
           onClose={() => setBookingSession(null)}
         />

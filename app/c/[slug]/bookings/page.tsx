@@ -39,7 +39,7 @@ export default async function ClinicBookingsPage({
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           Today&apos;s bookings
         </h1>
-        <p className="mt-3 text-slate-600">{slug}</p>
+        {/* <p className="mt-3 text-slate-600">{slug}</p> */}
 
         {loadError ? (
           <p
