@@ -9,10 +9,11 @@ export interface PatientQueueEntry {
 }
 
 export function maskPhone(phone?: string): string {
-  const digits = typeof phone === "string" ? phone.replace(/\D/g, "") : "";
+  let digits = typeof phone === "string" ? phone.replace(/\D/g, "") : "";
   if (!digits) return "—";
+  if (/^91[6-9]\d{9}$/.test(digits)) digits = digits.slice(2);
   if (digits.length <= 8) return "****";
-  return `${digits.slice(0, 4)}${"*".repeat(digits.length - 8)}${digits.slice(-4)}`;
+  return `${digits.slice(0, 2)}${"*".repeat(digits.length - 6)}${digits.slice(-4)}`;
 }
 
 export function toPatientQueue(bookings: DailyBooking[]): PatientQueueEntry[] {

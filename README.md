@@ -13,9 +13,10 @@ npm run dev
 The app currently provides:
 
 - `/login` — sign in to the clinic dashboard.
-- `/dashboard/sessions` — the post-login destination; create/edit Morning and Evening sessions and manage booking status.
+- `/dashboard` — the post-login destination; view patient bookings by date.
+- `/dashboard/sessions` — create/edit Morning and Evening sessions and manage booking status.
 - `/dashboard/queue` — manage and monitor the selected session's patient queue.
-- `/dashboard/patients` — view patient bookings by date.
+- `/dashboard/patients` — an alternative link to the patient list.
 - `/dashboard/patient-display` — staff-authenticated, read-only queue display for patients.
 - `/c/demo-dental` — today's sessions and booking availability.
 - `/c/demo-dental/bookings` — today's clinic booking list.
@@ -36,6 +37,8 @@ Management requests forward the JWT as a bearer token on the server.
 
 The patient list uses `GET /api/staff/bookings?date=YYYY-MM-DD` with the staff
 JWT. It defaults to today's date in the clinic's Asia/Kolkata time zone.
+The patient history and live queue display the `address` returned in each
+staff booking; missing addresses are shown as a dash.
 
 The queue page reads clinic bookings and refreshes every 10 seconds. Queue
 actions use `POST /api/clinics/demo-dental/sessions/{MORNING|EVENING}/call-next`
@@ -45,9 +48,12 @@ of `SERVING`, `SKIPPED`, `WAITING`, or `NO_SHOW`. Walk-ins use the existing
 `POST /api/public/bookings` request shape. The queue-management endpoints should
 require the JWT; the proxy forwards it from the HTTP-only cookie.
 
-Open the patient display on a staff-signed-in shared screen from the queue page.
+Open the patient display on a staff-signed-in shared screen from the dashboard navigation.
+Choose "Open waiting room screen" to show the queue without staff navigation.
 It refreshes every 10 seconds and receives only patient names, tokens, masked
 phone numbers, sessions, and statuses from the frontend server. Phone numbers
-with eight or fewer digits are fully masked. This is a kiosk view, not a public
+show only the first two and last four digits; numbers with eight or fewer
+digits are fully masked. The Indian country code is omitted before masking.
+This is a kiosk view, not a public
 link: the signed-in browser still has staff access to the underlying APIs, so
 the screen and browser should be secured against patient interaction.

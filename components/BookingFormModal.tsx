@@ -21,7 +21,7 @@ const bookingSchema = z.object({
   phone: z
     .string()
     .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number."),
-  reason: z.string().trim().max(500, "Reason must be 500 characters or fewer."),
+  address: z.string().trim().max(500, "Address must be 500 characters or fewer."),
 });
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
@@ -47,7 +47,7 @@ export function BookingFormModal({
     formState: { errors, isSubmitting },
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: { patientName: "", phone: "", reason: "" },
+    defaultValues: { patientName: "", phone: "", address: "" },
   });
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export function BookingFormModal({
     }
   }, [open, reset]);
 
-  const onSubmit = handleSubmit(async ({ patientName, phone, reason }) => {
+  const onSubmit = handleSubmit(async ({ patientName, phone, address }) => {
     setSubmitError(null);
     try {
       if (!sessionId) {
@@ -74,7 +74,7 @@ export function BookingFormModal({
         sessionId,
         patientName,
         phone,
-        ...(reason ? { reason } : {}),
+        ...(address ? { address } : {}),
       };
       const result = await apiFetch<CreateBookingResponse>(
         "/api/public/bookings",
@@ -206,28 +206,29 @@ export function BookingFormModal({
 
           <div>
             <label
-              htmlFor="booking-reason"
+              htmlFor="booking-address"
               className="mb-2 block text-sm font-medium text-slate-700"
             >
-              Reason for visit <span className="font-normal text-slate-500">(optional)</span>
+              Address <span className="font-normal text-slate-500">(optional)</span>
             </label>
             <textarea
-              id="booking-reason"
+              id="booking-address"
               rows={3}
               maxLength={500}
-              {...register("reason")}
-              aria-invalid={Boolean(errors.reason)}
-              aria-describedby={errors.reason ? "booking-reason-error" : undefined}
+              autoComplete="street-address"
+              {...register("address")}
+              aria-invalid={Boolean(errors.address)}
+              aria-describedby={errors.address ? "booking-address-error" : undefined}
               className="w-full resize-y rounded-xl border border-slate-300 px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 aria-invalid:border-rose-500"
-              placeholder="Briefly describe what you need help with"
+              placeholder="Enter your address"
             />
-            {errors.reason && (
+            {errors.address && (
               <p
-                id="booking-reason-error"
+                id="booking-address-error"
                 role="alert"
                 className="mt-2 text-sm text-rose-700"
               >
-                {errors.reason.message}
+                {errors.address.message}
               </p>
             )}
           </div>

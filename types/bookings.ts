@@ -4,7 +4,7 @@ export interface CreateBookingRequest {
   sessionId: string;
   patientName: string;
   phone: string;
-  reason?: string;
+  address?: string;
 }
 
 export interface CreateBookingResponse {
@@ -27,6 +27,7 @@ export interface DailyBooking {
   tokenNumber?: string | number;
   patientName: string;
   phone?: string;
+  address?: string | null;
   sessionType?: string;
   session?:
     | string

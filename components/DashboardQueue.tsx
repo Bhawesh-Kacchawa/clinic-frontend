@@ -170,7 +170,7 @@ export function DashboardQueue() {
           sessionId: selectedSession.toUpperCase(),
           patientName: String(formData.get("patientName") ?? "").trim(),
           phone: String(formData.get("phone") ?? "").trim(),
-          reason: String(formData.get("reason") ?? "").trim() || undefined,
+          address: String(formData.get("address") ?? "").trim() || undefined,
         }),
       });
       setWalkInOpen(false);
@@ -290,9 +290,11 @@ export function DashboardQueue() {
             />
           </label>
           <label className="text-sm font-medium text-slate-700">
-            Reason (optional)
+            Address (optional)
             <input
-              name="reason"
+              name="address"
+              autoComplete="street-address"
+              maxLength={500}
               className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
             />
           </label>
@@ -316,12 +318,13 @@ export function DashboardQueue() {
       ) : null}
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <table className="w-full min-w-[900px] divide-y divide-slate-200 text-left">
+        <table className="w-full min-w-[1000px] divide-y divide-slate-200 text-left">
           <thead className="bg-slate-50 text-sm text-slate-600">
             <tr>
               <th scope="col" className="px-5 py-3 font-semibold">Queue</th>
               <th scope="col" className="px-5 py-3 font-semibold">Patient</th>
               <th scope="col" className="px-5 py-3 font-semibold">Phone</th>
+              <th scope="col" className="px-5 py-3 font-semibold">Address</th>
               <th scope="col" className="px-5 py-3 font-semibold">Status</th>
               <th scope="col" className="px-5 py-3 font-semibold">Actions</th>
             </tr>
@@ -329,13 +332,13 @@ export function DashboardQueue() {
           <tbody className="divide-y divide-slate-100 text-sm">
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-5 py-6 text-slate-600">
+                <td colSpan={6} className="px-5 py-6 text-slate-600">
                   Loading queue…
                 </td>
               </tr>
             ) : sessionBookings.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-6 text-slate-600">
+                <td colSpan={6} className="px-5 py-6 text-slate-600">
                   No patients in the {selectedSession.toLowerCase()} queue.
                 </td>
               </tr>
@@ -354,13 +357,9 @@ export function DashboardQueue() {
                     </td>
                     <td className="px-5 py-4 text-slate-900">
                       <span className="font-medium">{booking.patientName}</span>
-                      {booking.reason ? (
-                        <span className="mt-1 block text-xs text-slate-500">
-                          {booking.reason}
-                        </span>
-                      ) : null}
                     </td>
                     <td className="px-5 py-4 text-slate-600">{booking.phone ?? "—"}</td>
+                    <td className="px-5 py-4 text-slate-600">{booking.address || "—"}</td>
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[status] ?? "bg-slate-100 text-slate-700"}`}

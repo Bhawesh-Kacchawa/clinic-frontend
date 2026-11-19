@@ -35,7 +35,7 @@ export function LoginForm() {
         return;
       }
 
-      window.location.assign("/dashboard/sessions");
+      window.location.assign("/dashboard");
     } catch {
       setError("Unable to reach the authentication service. Please try again.");
     } finally {

@@ -1,13 +1,12 @@
-import Link from "next/link";
 import { DashboardSessions } from "@/components/DashboardSessions";
 
 export default function DashboardSessionsPage() {
   return (
-    <main className="min-h-screen px-6 py-12 sm:px-8 sm:py-16">
+    <main className="px-5 py-8 sm:px-8 sm:py-12 lg:px-10">
       <section className="mx-auto w-full max-w-5xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-700">
+        {/* <p className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-700">
           Clinic dashboard
-        </p>
+        </p> */}
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           Manage sessions
         </h1>
@@ -15,20 +14,6 @@ export default function DashboardSessionsPage() {
           Create or edit clinic hours and manage booking availability for each
           session.
         </p>
-        <div className="mt-4 flex flex-wrap gap-4">
-          <Link
-            href="/dashboard/queue"
-            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
-          >
-            Manage patient queue
-          </Link>
-          <Link
-            href="/dashboard/patients"
-            className="text-sm font-semibold text-cyan-800 underline underline-offset-4"
-          >
-            View patients
-          </Link>
-        </div>
         <DashboardSessions />
       </section>
     </main>
