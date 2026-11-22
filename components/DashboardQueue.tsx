@@ -353,7 +353,7 @@ export function DashboardQueue() {
                 return (
                   <tr key={key}>
                     <td className="px-5 py-4 font-bold text-slate-900">
-                      {index + 1}. #{getToken(booking)}
+                      {getToken(booking)}
                     </td>
                     <td className="px-5 py-4 text-slate-900">
                       <span className="font-medium">{booking.patientName}</span>

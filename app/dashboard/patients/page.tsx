@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { apiFetch } from "@/lib/api";
 import { clinicToday, isBookingDate } from "@/lib/patient-bookings";
 import type { DailyBooking } from "@/types/bookings";
+import { PatientBookingCallAction } from "@/components/PatientBookingCallAction";
 
 export const dynamic = "force-dynamic";
 
@@ -90,12 +91,13 @@ export default async function DashboardPatientsPage({
                     <th scope="col" className="px-5 py-3 font-semibold">Address</th>
                     <th scope="col" className="px-5 py-3 font-semibold">Session</th>
                     <th scope="col" className="px-5 py-3 font-semibold">Status</th>
+                    <th scope="col" className="px-5 py-3 font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm">
                   {bookings.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-5 py-6 text-slate-600">
+                      <td colSpan={7} className="px-5 py-6 text-slate-600">
                         No patients booked for this date.
                       </td>
                     </tr>
@@ -109,6 +111,12 @@ export default async function DashboardPatientsPage({
                         {booking.sessionType ?? (typeof booking.session === "string" ? booking.session : booking.session?.type) ?? "—"}
                       </td>
                       <td className="px-5 py-4 text-slate-600">{booking.status ?? "—"}</td>
+                      <td className="px-5 py-4">
+                        <PatientBookingCallAction
+                          bookingId={booking.bookingId}
+                          token={booking.tokenNo ?? booking.tokenNumber ?? "—"}
+                        />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
