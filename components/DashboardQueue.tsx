@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import { truncatePatientAddress } from "@/lib/patient-bookings";
 import type { CreateBookingResponse, DailyBooking } from "@/types/bookings";
@@ -48,6 +48,127 @@ function compareQueue(a: DailyBooking, b: DailyBooking): number {
 
 function statusKey(status?: string): string {
   return (status ?? "WAITING").toUpperCase().replace(/[\s-]+/g, "_");
+}
+
+function SessionSelector({
+  value,
+  onChange,
+}: {
+  value: SessionName;
+  onChange: (session: SessionName) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<SessionName>(value);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const id = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    function closeOnOutsideClick(event: PointerEvent) {
+      if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, [open]);
+
+  function choose(session: SessionName) {
+    onChange(session);
+    setOpen(false);
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const current = sessionNames.indexOf(open ? active : value);
+      const direction = event.key === "ArrowDown" ? 1 : -1;
+      setActive(sessionNames[Math.max(0, Math.min(sessionNames.length - 1, current + direction))]);
+      setOpen(true);
+    } else if (event.key === "Home" || event.key === "End") {
+      event.preventDefault();
+      setActive(sessionNames[event.key === "Home" ? 0 : sessionNames.length - 1]);
+      setOpen(true);
+    } else if (open && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      choose(active);
+    } else if (open && event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+    } else if (open && event.key === "Tab") {
+      choose(active);
+    } else if (event.key.length === 1 && !event.altKey && !event.ctrlKey && !event.metaKey) {
+      const match = sessionNames.find((name) => name.toLowerCase().startsWith(event.key.toLowerCase()));
+      if (match) {
+        event.preventDefault();
+        setActive(match);
+        setOpen(true);
+      }
+    }
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full max-w-xs sm:w-56"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <span id={`${id}-label`} className="text-sm font-semibold text-slate-700">Session</span>
+      <button
+        type="button"
+        role="combobox"
+        aria-labelledby={`${id}-label`}
+        aria-expanded={open}
+        aria-controls={`${id}-listbox`}
+        aria-activedescendant={open ? `${id}-${active}` : undefined}
+        onKeyDown={handleKeyDown}
+        onClick={() => {
+          setActive(value);
+          setOpen((previous) => !previous);
+        }}
+        className="mt-2 flex w-full items-center gap-3 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:border-cyan-500 hover:bg-white focus:border-cyan-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-100"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 shrink-0 text-cyan-700">
+          <circle cx="12" cy="12" r="9" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 2" />
+        </svg>
+        <span className="flex-1">{value}</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`h-4 w-4 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      {open && (
+        <ul
+          id={`${id}-listbox`}
+          role="listbox"
+          aria-labelledby={`${id}-label`}
+          className="absolute left-0 right-0 top-full z-30 mt-2 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg ring-1 ring-slate-900/5"
+        >
+          {sessionNames.map((name) => (
+            <li
+              key={name}
+              id={`${id}-${name}`}
+              role="option"
+              aria-selected={value === name}
+              onPointerDown={(event) => event.preventDefault()}
+              onPointerMove={() => setActive(name)}
+              onClick={() => choose(name)}
+              className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium ${active === name ? "bg-cyan-50 text-cyan-900" : "text-slate-700"}`}
+            >
+              {name}
+              {value === name && (
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-cyan-700">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" />
+                </svg>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 export function DashboardQueue() {
@@ -182,20 +303,7 @@ export function DashboardQueue() {
   return (
     <div className="mt-8">
       <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end sm:justify-between">
-        <label className="max-w-xs text-sm font-semibold text-slate-700">
-          Session
-          <select
-            value={selectedSession}
-            onChange={(event) =>
-              setSelectedSession(event.target.value as SessionName)
-            }
-            className="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
-          >
-            {sessionNames.map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </label>
+        <SessionSelector value={selectedSession} onChange={setSelectedSession} />
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
