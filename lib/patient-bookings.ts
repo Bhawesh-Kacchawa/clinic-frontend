@@ -9,6 +9,15 @@ export function formatClinicDate(date: string): string {
   return `${day}-${month}-${year}`;
 }
 
+export function formatPatientAddress(address: string): string {
+  return address.replace(/([^\r\n]{20})(?=[^\r\n])/gu, "$1\n");
+}
+
+export function truncatePatientAddress(address: string): string {
+  const characters = Array.from(address);
+  return characters.length > 15 ? `${characters.slice(0, 15).join("")}...` : address;
+}
+
 export function isBookingDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(`${value}T00:00:00Z`);

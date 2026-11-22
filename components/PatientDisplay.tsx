@@ -8,9 +8,9 @@ export function PatientDisplay({ screen = false }: { screen?: boolean }) {
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-700">
           Patient display
         </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        {/* <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           Today&apos;s queue
-        </h1>
+        </h1> */}
         <p className="mt-3 text-slate-600">
           Please watch for your token number to be called.
         </p>
@@ -22,7 +22,7 @@ export function PatientDisplay({ screen = false }: { screen?: boolean }) {
             Open waiting room screen
           </Link>
         )}
-        <PatientQueue />
+        <PatientQueue followServing={screen} />
       </section>
     </main>
   );

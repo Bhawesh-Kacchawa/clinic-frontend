@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api";
+import { truncatePatientAddress } from "@/lib/patient-bookings";
 import type { CreateBookingResponse, DailyBooking } from "@/types/bookings";
 import type { SessionName } from "@/types/sessions";
 
@@ -9,13 +10,13 @@ const clinicSlug = "demo-dental";
 const sessionNames: SessionName[] = ["Morning", "Evening"];
 
 const statusStyles: Record<string, string> = {
-  WAITING: "bg-sky-100 text-sky-800",
-  SERVING: "bg-emerald-100 text-emerald-800",
-  SKIPPED: "bg-amber-100 text-amber-900",
-  DONE: "bg-slate-100 text-slate-700",
-  NO_SHOW: "bg-rose-100 text-rose-800",
-  NOSHOW: "bg-rose-100 text-rose-800",
-  CANCELLED: "bg-slate-100 text-slate-600",
+  WAITING:   "bg-sky-100 text-sky-800 ring-1 ring-sky-200",
+  SERVING:   "bg-emerald-600 text-white ring-1 ring-emerald-700 font-semibold",
+  SKIPPED:   "bg-amber-100 text-amber-900 ring-1 ring-amber-300",
+  DONE:      "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
+  NO_SHOW:   "bg-rose-100 text-rose-800 ring-1 ring-rose-200",
+  NOSHOW:    "bg-rose-100 text-rose-800 ring-1 ring-rose-200",
+  CANCELLED: "bg-transparent text-slate-500 ring-1 ring-slate-300 line-through",
 };
 
 function getSessionName(booking: DailyBooking): SessionName | null {
@@ -359,7 +360,9 @@ export function DashboardQueue() {
                       <span className="font-medium">{booking.patientName}</span>
                     </td>
                     <td className="px-5 py-4 text-slate-600">{booking.phone ?? "—"}</td>
-                    <td className="px-5 py-4 text-slate-600">{booking.address || "—"}</td>
+                    <td className="px-5 py-4 text-slate-600" title={booking.address || undefined}>
+                      {booking.address ? truncatePatientAddress(booking.address) : "—"}
+                    </td>
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[status] ?? "bg-slate-100 text-slate-700"}`}

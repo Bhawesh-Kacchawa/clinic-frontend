@@ -3,9 +3,11 @@ import { test } from "node:test";
 import {
   clinicToday,
   formatClinicDate,
+  formatPatientAddress,
   isBookingDate,
   isTokenAppointment,
   tokenText,
+  truncatePatientAddress,
 } from "../lib/patient-bookings.ts";
 
 test("clinic date follows the clinic time zone", () => {
@@ -14,6 +16,20 @@ test("clinic date follows the clinic time zone", () => {
 
 test("clinic date is displayed as DD-MM-YYYY", () => {
   assert.equal(formatClinicDate("2026-11-17"), "17-11-2026");
+});
+
+test("patient addresses wrap after at most 20 characters", () => {
+  assert.equal(formatPatientAddress("12345678901234567890"), "12345678901234567890");
+  assert.equal(formatPatientAddress("123456789012345678901"), "12345678901234567890\n1");
+  assert.equal(formatPatientAddress("🏠".repeat(21)), `${"🏠".repeat(20)}\n🏠`);
+  assert.equal(formatPatientAddress("1234567890\n123456789012345678901"), "1234567890\n12345678901234567890\n1");
+});
+
+test("queue addresses are truncated only when longer than 15 characters", () => {
+  assert.equal(truncatePatientAddress("Short address"), "Short address");
+  assert.equal(truncatePatientAddress("123456789012345"), "123456789012345");
+  assert.equal(truncatePatientAddress("1234567890123456"), "123456789012345...");
+  assert.equal(truncatePatientAddress("🏠".repeat(16)), `${"🏠".repeat(15)}...`);
 });
 
 test("booking dates must be real ISO calendar dates", () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PatientQueueEntry } from "@/lib/patient-queue";
 
 function compareTokens(a: PatientQueueEntry, b: PatientQueueEntry): number {
@@ -9,10 +9,11 @@ function compareTokens(a: PatientQueueEntry, b: PatientQueueEntry): number {
   });
 }
 
-export function PatientQueue() {
+export function PatientQueue({ followServing = false }: { followServing?: boolean }) {
   const [bookings, setBookings] = useState<PatientQueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const queueContainers = useRef(new Map<string, HTMLDivElement>());
 
   useEffect(() => {
     let active = true;
@@ -74,6 +75,22 @@ export function PatientQueue() {
     }));
   }, [bookings]);
 
+  useEffect(() => {
+    if (!followServing || loading) return;
+
+    for (const container of queueContainers.current.values()) {
+      const row = container.querySelector<HTMLTableRowElement>('tr[data-serving="true"]');
+      if (!row) continue;
+
+      const containerRect = container.getBoundingClientRect();
+      const rowRect = row.getBoundingClientRect();
+      const headerHeight = container.querySelector("thead")?.getBoundingClientRect().height ?? 0;
+      if (rowRect.top < containerRect.top + headerHeight || rowRect.bottom > containerRect.bottom) {
+        container.scrollTop += rowRect.top - containerRect.top - headerHeight;
+      }
+    }
+  }, [followServing, groups, loading]);
+
   return (
     <div className="mt-8">
       {error && (
@@ -105,9 +122,15 @@ export function PatientQueue() {
                     </p>
                   </div>
                 </div>
-                <div className="overflow-x-auto">
+                <div
+                  ref={(element) => {
+                    if (element) queueContainers.current.set(session, element);
+                    else queueContainers.current.delete(session);
+                  }}
+                  className={followServing ? "max-h-[max(12rem,calc(100vh-28rem))] overflow-auto" : "overflow-x-auto"}
+                >
                   <table className="w-full min-w-[440px] text-left text-sm">
-                    <thead className="bg-slate-50 text-slate-600">
+                    <thead className={`${followServing ? "sticky top-0" : ""} bg-slate-50 text-slate-600`}>
                       <tr>
                         <th scope="col" className="px-4 py-3 font-semibold">Token</th>
                         <th scope="col" className="px-4 py-3 font-semibold">Patient</th>
@@ -121,6 +144,7 @@ export function PatientQueue() {
                       ) : sessionBookings.map((booking, index) => (
                         <tr
                           key={index}
+                          data-serving={booking.status === "SERVING" || undefined}
                           className={booking.status === "SERVING" ? "bg-emerald-50" : undefined}
                         >
                           <td className={`px-4 py-4 font-bold ${booking.status === "SERVING" ? "text-emerald-800" : "text-slate-900"}`}>
