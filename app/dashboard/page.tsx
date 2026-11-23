@@ -1,4 +1,5 @@
-import DashboardPatientsPage from "./patients/page";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export default DashboardPatientsPage;
+export default function DashboardPage() {
+  redirect("/dashboard/queue");
+}

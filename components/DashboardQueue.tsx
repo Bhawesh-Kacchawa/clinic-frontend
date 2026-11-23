@@ -181,6 +181,17 @@ export function DashboardQueue() {
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [walkInOpen, setWalkInOpen] = useState(false);
   const refreshInProgress = useRef(false);
+  const walkInDialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = walkInDialogRef.current;
+    if (!dialog) return;
+    if (walkInOpen && !dialog.open) {
+      dialog.showModal();
+    } else if (!walkInOpen && dialog.open) {
+      dialog.close();
+    }
+  }, [walkInOpen]);
 
   const refresh = useCallback(async (showLoading = false) => {
     if (refreshInProgress.current) return;
@@ -315,7 +326,10 @@ export function DashboardQueue() {
           </button>
           <button
             type="button"
-            onClick={() => setWalkInOpen((open) => !open)}
+            onClick={() => {
+              setActionError(null);
+              setWalkInOpen(true);
+            }}
             disabled={busyAction !== null}
             className="rounded-xl border border-cyan-700 px-4 py-3 text-sm font-semibold text-cyan-800 hover:bg-cyan-50 disabled:opacity-50"
           >
@@ -359,7 +373,7 @@ export function DashboardQueue() {
           Queue refresh failed: {refreshError}
         </p>
       ) : null}
-      {actionError ? (
+      {actionError && !walkInOpen ? (
         <p
           role="alert"
           className="mt-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-800"
@@ -376,55 +390,90 @@ export function DashboardQueue() {
         </p>
       ) : null}
 
-      {walkInOpen ? (
-        <form
-          onSubmit={addWalkIn}
-          className="mt-5 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-3"
-        >
-          <label className="text-sm font-medium text-slate-700">
-            Patient name
-            <input
-              name="patientName"
-              required
-              className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-700">
-            Phone
-            <input
-              name="phone"
-              type="tel"
-              required
-              className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-700">
-            Address (optional)
-            <input
-              name="address"
-              autoComplete="street-address"
-              maxLength={500}
-              className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
-            />
-          </label>
-          <div className="flex gap-2 sm:col-span-3">
-            <button
-              type="submit"
-              disabled={busyAction !== null}
-              className="rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-50"
-            >
-              {busyAction === "walk-in" ? "Adding…" : "Add to queue"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setWalkInOpen(false)}
-              className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      ) : null}
+      <dialog
+        ref={walkInDialogRef}
+        aria-labelledby="walk-in-title"
+        className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-slate-200 bg-white p-0 text-slate-900 shadow-xl backdrop:bg-slate-950/50"
+        onCancel={(event) => {
+          event.preventDefault();
+          if (busyAction === null) setWalkInOpen(false);
+        }}
+        onClick={(event) => {
+          if (event.target === event.currentTarget && busyAction === null) {
+            setWalkInOpen(false);
+          }
+        }}
+      >
+        {walkInOpen && (
+          <form onSubmit={addWalkIn} className="space-y-4 p-6 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-cyan-700">{selectedSession} session</p>
+                <h2 id="walk-in-title" className="mt-2 text-2xl font-semibold tracking-tight">
+                  Add walk-in
+                </h2>
+              </div>
+              <button
+                type="button"
+                aria-label="Close walk-in form"
+                onClick={() => setWalkInOpen(false)}
+                disabled={busyAction !== null}
+                className="rounded-lg px-3 py-1 text-xl leading-6 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50"
+              >
+                &times;
+              </button>
+            </div>
+            {actionError && (
+              <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+                {actionError}
+              </p>
+            )}
+            <label className="block text-sm font-medium text-slate-700">
+              Patient name
+              <input
+                name="patientName"
+                required
+                className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
+              />
+            </label>
+            <label className="block text-sm font-medium text-slate-700">
+              Phone
+              <input
+                name="phone"
+                type="tel"
+                required
+                className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
+              />
+            </label>
+            <label className="block text-sm font-medium text-slate-700">
+              Address (optional)
+              <input
+                name="address"
+                autoComplete="street-address"
+                maxLength={500}
+                className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5"
+              />
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={busyAction !== null}
+                className="rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-50"
+              >
+                {busyAction === "walk-in" ? "Adding…" : "Add to queue"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setWalkInOpen(false)}
+                disabled={busyAction !== null}
+                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+      </dialog>
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[1000px] divide-y divide-slate-200 text-left">

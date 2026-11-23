@@ -13,10 +13,10 @@ npm run dev
 The app currently provides:
 
 - `/login` — sign in to the clinic dashboard.
-- `/dashboard` — the post-login destination; view patient bookings by date.
+- `/dashboard` — the post-login destination; redirects to the live queue.
 - `/dashboard/sessions` — create/edit Morning and Evening sessions and manage booking status.
 - `/dashboard/queue` — manage and monitor the selected session's patient queue.
-- `/dashboard/patients` — an alternative link to the patient list.
+- `/dashboard/patients` — view patient bookings by date.
 - `/dashboard/patient-display` — staff-authenticated, read-only queue display for patients.
 - `/c/demo-dental` — today's sessions and booking availability.
 - `/c/demo-dental/bookings` — today's clinic booking list.

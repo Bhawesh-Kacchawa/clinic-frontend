@@ -39,15 +39,15 @@ export default async function DashboardPatientsPage({
   }
 
   return (
-    <main className="px-5 py-8 sm:px-8 sm:py-12 lg:px-10">
+    <main className="px-2 py-2 sm:px-8 sm:py-2 lg:px-2">
       <section className="mx-auto w-full max-w-6xl">
         {/* <p className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-700">
           Clinic dashboard
         </p> */}
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="text-xl font-semibold uppercase tracking-[0.16em] text-cyan-700">
           Patients
         </h1>
-        <p className="mt-3 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           View patient bookings for a selected date.
         </p>
         <form className="mt-8 flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -66,7 +66,7 @@ export default async function DashboardPatientsPage({
           <button type="submit" className="rounded-xl bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2">
             Show patients
           </button>
-          <Link href="/dashboard" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+          <Link href="/dashboard/patients" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
             Today
           </Link>
         </form>
