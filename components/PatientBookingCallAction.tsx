@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
-const clinicSlug = "demo-dental";
+const clinicSlug = "demo-doctor";
 
 export function PatientBookingCallAction({
   bookingId,

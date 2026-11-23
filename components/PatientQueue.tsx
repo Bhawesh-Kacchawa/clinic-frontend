@@ -13,6 +13,7 @@ export function PatientQueue({ followServing = false }: { followServing?: boolea
   const [bookings, setBookings] = useState<PatientQueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSession, setSelectedSession] = useState("ALL");
   const queueContainers = useRef(new Map<string, HTMLDivElement>());
 
   useEffect(() => {
@@ -63,7 +64,9 @@ export function PatientQueue({ followServing = false }: { followServing?: boolea
     if (bookings.some((booking) => !sessions.includes(booking.session))) {
       sessions.push("OTHER");
     }
-    return sessions.map((session) => ({
+    return sessions.filter((session) =>
+      !followServing || selectedSession === "ALL" || session === selectedSession,
+    ).map((session) => ({
       session,
       bookings: bookings
         .filter((booking) =>
@@ -73,7 +76,7 @@ export function PatientQueue({ followServing = false }: { followServing?: boolea
         )
         .sort(compareTokens),
     }));
-  }, [bookings]);
+  }, [bookings, followServing, selectedSession]);
 
   useEffect(() => {
     if (!followServing || loading) return;
@@ -93,6 +96,20 @@ export function PatientQueue({ followServing = false }: { followServing?: boolea
 
   return (
     <div className="mt-8">
+      {followServing && (
+        <label className="mb-5 block w-full max-w-xs text-sm font-semibold text-slate-700">
+          Show session
+          <select
+            value={selectedSession}
+            onChange={(event) => setSelectedSession(event.target.value)}
+            className="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-100"
+          >
+            <option value="ALL">All sessions</option>
+            <option value="MORNING">Morning</option>
+            <option value="EVENING">Evening</option>
+          </select>
+        </label>
+      )}
       {error && (
         <p role="alert" className="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-800">
           {error} Displayed information may be out of date. Retrying automatically.
@@ -103,7 +120,7 @@ export function PatientQueue({ followServing = false }: { followServing?: boolea
           Loading queue…
         </p>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className={`grid gap-6 ${groups.length > 1 ? "lg:grid-cols-2" : ""}`}>
           {groups.map(({ session, bookings: sessionBookings }) => {
             const serving = sessionBookings.find((booking) => booking.status === "SERVING");
             return (

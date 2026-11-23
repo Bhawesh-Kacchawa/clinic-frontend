@@ -6,14 +6,14 @@ import { truncatePatientAddress } from "@/lib/patient-bookings";
 import type { CreateBookingResponse, DailyBooking } from "@/types/bookings";
 import type { SessionName } from "@/types/sessions";
 
-const clinicSlug = "demo-dental";
+const clinicSlug = "demo-doctor";
 const sessionNames: SessionName[] = ["Morning", "Evening"];
 
 const statusStyles: Record<string, string> = {
   WAITING:   "bg-sky-100 text-sky-800 ring-1 ring-sky-200",
   SERVING:   "bg-emerald-600 text-white ring-1 ring-emerald-700 font-semibold",
   SKIPPED:   "bg-amber-100 text-amber-900 ring-1 ring-amber-300",
-  DONE:      "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
+  DONE:      "bg-green-100 text-green-600 ring-1 ring-green-200",
   NO_SHOW:   "bg-rose-100 text-rose-800 ring-1 ring-rose-200",
   NOSHOW:    "bg-rose-100 text-rose-800 ring-1 ring-rose-200",
   CANCELLED: "bg-transparent text-slate-500 ring-1 ring-slate-300 line-through",
@@ -509,7 +509,7 @@ export function DashboardQueue() {
                 const skipped = status === "SKIPPED";
 
                 return (
-                  <tr key={key}>
+                  <tr key={key} className={status === "SERVING" ? "bg-green-100" : undefined}>
                     <td className="px-5 py-4 font-bold text-slate-900">
                       {getToken(booking)}
                     </td>
