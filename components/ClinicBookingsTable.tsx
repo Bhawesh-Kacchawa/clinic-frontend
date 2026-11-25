@@ -81,7 +81,14 @@ export function ClinicBookingsTable({
               </tr>
             ) : (
               bookings.map((booking, index) => (
-                <tr key={booking.bookingId ?? `${booking.patientName}-${index}`}>
+                <tr
+                  key={booking.bookingId ?? `${booking.patientName}-${index}`}
+                  className={
+                    booking.status?.trim().toUpperCase() === "SERVING"
+                      ? "bg-green-200"
+                      : undefined
+                  }
+                >
                   <td className="px-5 py-4 font-semibold text-slate-900">
                     {booking.tokenNo ?? booking.tokenNumber ?? "—"}
                   </td>

@@ -132,10 +132,8 @@ export function PatientQueue({ followServing = false }: { followServing?: boolea
                   <p className="mt-4 text-sm text-slate-300">Now serving</p>
                   <div aria-live="polite">
                     <p className="mt-1 text-4xl font-bold">
-                      {serving?.token != null ? `#${serving.token}` : "—"}
-                    </p>
-                    <p className="mt-2 text-lg text-slate-200">
-                      {serving ? serving.patientName : "No patient is being called right now."}
+                      {serving?.token != null ? `${serving.token}` : "—"}  {" - "}
+                       {serving ? serving.patientName : "No patient is being called right now."}
                     </p>
                   </div>
                 </div>
