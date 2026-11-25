@@ -5,7 +5,7 @@ import { apiFetch } from "@/lib/api";
 import type { ClinicSessionsResponse } from "@/types/bookings";
 import type { SessionName } from "@/types/sessions";
 
-const clinicSlug = "demo-doctor";
+const clinicSlug = "demo-dental";
 const sessionOrder: SessionName[] = ["Morning", "Evening"];
 
 type SessionForm = {

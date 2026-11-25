@@ -6,7 +6,7 @@ import { truncatePatientAddress } from "@/lib/patient-bookings";
 import type { CreateBookingResponse, DailyBooking } from "@/types/bookings";
 import type { SessionName } from "@/types/sessions";
 
-const clinicSlug = "demo-doctor";
+const clinicSlug = "demo-dental";
 const sessionNames: SessionName[] = ["Morning", "Evening"];
 
 const statusStyles: Record<string, string> = {

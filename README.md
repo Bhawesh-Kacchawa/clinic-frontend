@@ -18,8 +18,8 @@ The app currently provides:
 - `/dashboard/queue` — manage and monitor the selected session's patient queue.
 - `/dashboard/patients` — view patient bookings by date.
 - `/dashboard/patient-display` — staff-authenticated, read-only queue display for patients.
-- `/c/demo-doctor` — today's sessions and booking availability.
-- `/c/demo-doctor/bookings` — today's clinic booking list.
+- `/c/demo-dental` — today's sessions and booking availability.
+- `/c/demo-dental/bookings` — today's clinic booking list.
 - `/t/{bookingId}` — a booking's token and queue details.
 
 For new bookings, the confirmation page saves the patient name and appointment
@@ -36,10 +36,10 @@ using `{ "email": "...", "password": "..." }`. The backend should return a
 SameSite=Lax cookie. Set `API_URL` on the server to the backend origin when
 possible; `NEXT_PUBLIC_API_URL` is used as a fallback.
 
-Session management uses `GET /api/public/clinics/demo-doctor/sessions` to
-load current sessions, `POST /api/clinics/demo-doctor/sessions` to create one,
-`PUT /api/clinics/demo-doctor/sessions/{MORNING|EVENING}` to edit one, and
-`PATCH /api/clinics/demo-doctor/sessions/{MORNING|EVENING}/status` with a
+Session management uses `GET /api/public/clinics/demo-dental/sessions` to
+load current sessions, `POST /api/clinics/demo-dental/sessions` to create one,
+`PUT /api/clinics/demo-dental/sessions/{MORNING|EVENING}` to edit one, and
+`PATCH /api/clinics/demo-dental/sessions/{MORNING|EVENING}/status` with a
 `bookingStatus` of `OPEN`, `PAUSED`, or `CLOSED` to update booking availability.
 Management requests forward the JWT as a bearer token on the server.
 
@@ -49,9 +49,9 @@ The patient history and live queue display the `address` returned in each
 staff booking; missing addresses are shown as a dash.
 
 The queue page reads clinic bookings and refreshes every 10 seconds. Queue
-actions use `POST /api/clinics/demo-doctor/sessions/{MORNING|EVENING}/call-next`
+actions use `POST /api/clinics/demo-dental/sessions/{MORNING|EVENING}/call-next`
 and `/undo`, and update individual bookings with
-`PATCH /api/clinics/demo-doctor/bookings/{bookingId}/status` using a `status`
+`PATCH /api/clinics/demo-dental/bookings/{bookingId}/status` using a `status`
 of `SERVING`, `SKIPPED`, `WAITING`, or `NO_SHOW`. Walk-ins use the existing
 `POST /api/public/bookings` request shape. The queue-management endpoints should
 require the JWT; the proxy forwards it from the HTTP-only cookie.
