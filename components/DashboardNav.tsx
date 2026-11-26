@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const navigation = [
   {
@@ -28,17 +29,37 @@ const navigation = [
 
 export function DashboardNav() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
 
   if (pathname === "/dashboard/patient-display/screen") return null;
 
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        <div className="flex min-h-16 flex-wrap items-center justify-between gap-x-6">
-          <Link href="/dashboard" className="py-4 text-base font-semibold tracking-tight text-slate-900">
-            Clinic workspace <span className="font-normal text-slate-500">/ Staff</span>
-          </Link>
-          <nav aria-label="Staff navigation" className="flex max-w-full gap-1 overflow-x-auto pb-2 sm:pb-0">
+    <>
+    <header className="flex min-h-16 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:hidden">
+      <button type="button" aria-label="Open navigation" aria-expanded={open} aria-controls="dashboard-sidebar" title="Open navigation" onClick={() => setOpen(true)} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-5 w-5">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <span className="text-base font-semibold text-slate-900">Clinic workspace <span className="font-normal text-slate-500">/ Staff</span></span>
+    </header>
+    {open && <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="fixed inset-0 z-40 bg-slate-900/40 sm:hidden" />}
+    <aside id="dashboard-sidebar" className={`${open ? "flex" : "hidden"} fixed inset-y-0 left-0 z-50 h-screen w-56 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white sm:sticky sm:top-0 sm:flex`}>
+      <Link href="/dashboard" onClick={() => setOpen(false)} className="flex min-h-16 items-center px-5 text-base font-semibold tracking-tight text-slate-900">
+        Clinic workspace <span className="ml-1 font-normal text-slate-500">/ Staff</span>
+      </Link>
+      <nav aria-label="Staff navigation" className="flex flex-col gap-1 px-3">
         {navigation.map((item) => {
           const active = pathname === item.href;
 
@@ -46,8 +67,10 @@ export function DashboardNav() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setOpen(false)}
               aria-current={active ? "page" : undefined}
-              className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 transition focus:outline-none ${
+              title={item.label}
+              className={`flex items-center gap-2 rounded-xl px-3 py-2.5 transition focus:outline-none ${
                 active
                   ? "bg-cyan-100 text-cyan-800"
                   : "text-slate-600 hover:bg-slate-100 hover:text-cyan-800"
@@ -60,9 +83,8 @@ export function DashboardNav() {
             </Link>
           );
         })}
-          </nav>
-        </div>
-      </div>
-    </header>
+      </nav>
+    </aside>
+    </>
   );
 }

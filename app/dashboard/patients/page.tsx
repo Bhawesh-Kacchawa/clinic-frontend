@@ -50,7 +50,7 @@ export default async function DashboardPatientsPage({
         <p className="mt-1 text-sm text-slate-600">
           View patient bookings for a selected date.
         </p>
-        <form className="mt-8 flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <form className="mt-2 flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <label htmlFor="date" className="text-sm font-semibold text-slate-700">
             Booking date
             <input

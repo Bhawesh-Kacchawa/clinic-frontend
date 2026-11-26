@@ -312,8 +312,8 @@ export function DashboardQueue() {
   }
 
   return (
-    <div className="mt-8">
-      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end sm:justify-between">
+    <div className="mt-2">
+      <div className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm sm:flex-row sm:items-end sm:justify-between">
         <SessionSelector value={selectedSession} onChange={setSelectedSession} />
         <div className="flex flex-wrap gap-2">
           <button

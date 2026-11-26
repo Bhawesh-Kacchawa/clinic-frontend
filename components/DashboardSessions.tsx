@@ -210,7 +210,7 @@ export function DashboardSessions() {
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-2 mx-2">
       {error ? (
         <p
           role="alert"
