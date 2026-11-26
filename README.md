@@ -18,7 +18,7 @@ The app currently provides:
 - `/dashboard/queue` — manage and monitor the selected session's patient queue.
 - `/dashboard/patients` — view patient bookings by date.
 - `/dashboard/patient-display` — staff-authenticated, read-only queue display for patients.
-- `/c/demo-dental` — today's sessions and booking availability.
+- `/c/demo-dental` — today's sessions, booking availability, and booked capacity.
 - `/c/demo-dental/bookings` — today's clinic booking list.
 - `/t/{bookingId}` — a booking's token and queue details.
 

@@ -40,6 +40,8 @@ export function toSessionAvailability(
       name,
       timing: `${session.startTime.slice(0, 5)}–${session.endTime.slice(0, 5)}`,
       slotsLeft,
+      bookedCount: session.bookedCount,
+      maxAppointments: session.maxAppointments,
       status,
       bookingOpensAt: session.bookingOpensAt,
       serverTime: response.serverTime,

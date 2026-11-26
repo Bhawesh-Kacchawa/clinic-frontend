@@ -7,6 +7,8 @@ export interface SessionAvailability {
   name: SessionName;
   timing: string;
   slotsLeft: number;
+  bookedCount: number;
+  maxAppointments: number;
   status: SessionStatus;
   bookingOpensAt?: string;
   serverTime?: string;

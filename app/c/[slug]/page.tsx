@@ -30,25 +30,25 @@ export default async function ClinicSessionsPage({
   return (
     <main className="min-h-screen px-6 py-12 sm:px-8 sm:py-16">
       <section className="mx-auto w-full max-w-4xl">
-        <p className="text-3xl font-semibold uppercase tracking-[0.16em] text-cyan-700">
+        <p className="text-xl font-semibold uppercase tracking-[0.16em] text-cyan-700 md:text-2xl">
           Available sessions
         </p>
         {/* <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           Choose a time
         </h1> */}
-        <p className="mt-3 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-slate-600">
           Appointments for today:{" "}
           <time dateTime={appointmentDate} className="font-semibold text-slate-900">
             {formatClinicDate(appointmentDate)}
           </time>
         </p>
         {/* <p className="mt-3 text-slate-600">{slug}</p> */}
-        <a
+        {/* <a
           href={`/c/${encodeURIComponent(slug)}/bookings`}
           className="mt-3 inline-flex text-sm font-semibold text-cyan-800 underline underline-offset-4"
         >
           View today&apos;s clinic bookings
-        </a>
+        </a> */}
 
         {loadError ? (
           <p

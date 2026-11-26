@@ -101,7 +101,33 @@ export function SessionCards({
               {session ? (
                 <>
                   <p className="mt-4 text-slate-600">{session.timing}</p>
-                  <p className="mt-6 text-sm text-slate-500">
+                  {session.maxAppointments > 0 && (
+                    <div className="mt-6">
+                      <p className="text-sm text-slate-600">
+                        {session.bookedCount} of {session.maxAppointments} appointments booked
+                      </p>
+                      <div
+                        role="progressbar"
+                        aria-label={`${name} session appointments booked`}
+                        aria-valuemin={0}
+                        aria-valuemax={session.maxAppointments}
+                        aria-valuenow={Math.min(
+                          session.maxAppointments,
+                          Math.max(0, session.bookedCount),
+                        )}
+                        aria-valuetext={`${session.bookedCount} of ${session.maxAppointments} appointments booked`}
+                        className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200"
+                      >
+                        <div
+                          className="h-full rounded-full bg-cyan-700 transition-[width]"
+                          style={{
+                            width: `${Math.min(100, Math.max(0, (session.bookedCount / session.maxAppointments) * 100))}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <p className="mt-4 text-sm text-slate-500">
                     <span className="font-semibold text-slate-900">
                       {session.slotsLeft}
                     </span>{" "}
@@ -111,7 +137,7 @@ export function SessionCards({
                     <button
                       type="button"
                       onClick={() => setBookingSession(session)}
-                      className="mt-5 rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
+                      className="mt-5 w-full rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
                     >
                       Book this session
                     </button>
