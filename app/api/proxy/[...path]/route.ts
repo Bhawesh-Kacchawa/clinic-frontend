@@ -1,6 +1,5 @@
 import type { NextRequest } from "next/server";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+import { getBackendUrl } from "@/lib/backend-url";
 
 type RouteContext = {
   params: Promise<{ path: string[] }>;
@@ -167,7 +166,7 @@ async function proxy(request: NextRequest, { params }: RouteContext) {
     (isClinicBookings
       ? "api/staff/bookings"
       : path.map(encodeURIComponent).join("/"));
-  const upstreamUrl = `${API_URL.replace(/\/+$/, "")}/${upstreamPath}${request.nextUrl.search}`;
+  const upstreamUrl = `${getBackendUrl().replace(/\/+$/, "")}/${upstreamPath}${request.nextUrl.search}`;
   const contentType = request.headers.get("content-type");
   if (contentType && !queueActionPath) headers.set("Content-Type", contentType);
 

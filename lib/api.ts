@@ -1,5 +1,4 @@
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://clinic-backend-w9g6.onrender.com";
+import { getBackendUrl } from "@/lib/backend-url";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -31,7 +30,7 @@ export async function apiFetch<T>(
   init: RequestInit = {},
 ): Promise<T> {
   const baseUrl =
-    typeof window === "undefined" ? API_URL : "/api/proxy";
+    typeof window === "undefined" ? getBackendUrl() : "/api/proxy";
   const url = `${baseUrl.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");

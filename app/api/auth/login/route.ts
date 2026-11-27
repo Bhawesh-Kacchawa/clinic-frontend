@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
+import { getBackendUrl } from "@/lib/backend-url";
 
-const API_URL =
-  process.env.API_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8080";
 const AUTH_COOKIE = "access_token";
 
 type LoginPayload = {
@@ -50,7 +47,7 @@ export async function POST(request: Request) {
   let upstream: Response;
   try {
     upstream = await fetch(
-      `${API_URL.replace(/\/+$/, "")}/api/auth/login`,
+      `${getBackendUrl().replace(/\/+$/, "")}/api/auth/login`,
       {
         method: "POST",
         headers: {

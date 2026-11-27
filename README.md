@@ -2,13 +2,18 @@
 
 ## Run locally
 
-Set `NEXT_PUBLIC_API_URL` to the backend origin (for example,
-`http://localhost:8080`), then start the app:
+Start the backend on `http://localhost:8080`, then start the app:
 
 ```sh
 npm install
 npm run dev
 ```
+
+Production builds use `https://clinic-backend-w9g6.onrender.com` by default.
+Set the server-side `API_URL` to override the backend in either environment.
+For compatibility, `NEXT_PUBLIC_API_URL` can also override the development
+backend; it is ignored in production. Restart the frontend after changing
+environment variables.
 
 The app currently provides:
 
@@ -33,8 +38,7 @@ file is not proof of booking; staff should verify it against the queue.
 The login route sends credentials to `POST /api/auth/login` on the backend
 using `{ "email": "...", "password": "..." }`. The backend should return a
 `token` field containing the JWT; the frontend stores it in an HTTP-only,
-SameSite=Lax cookie. Set `API_URL` on the server to the backend origin when
-possible; `NEXT_PUBLIC_API_URL` is used as a fallback.
+SameSite=Lax cookie.
 
 Session management uses `GET /api/public/clinics/demo-dental/sessions` to
 load current sessions, `POST /api/clinics/demo-dental/sessions` to create one,
