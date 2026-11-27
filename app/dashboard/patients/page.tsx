@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { apiFetch } from "@/lib/api";
-import { clinicToday, formatPatientAddress, isBookingDate } from "@/lib/patient-bookings";
+import {
+  clinicToday,
+  formatClinicDate,
+  formatPatientAddress,
+  isBookingDate,
+} from "@/lib/patient-bookings";
 import type { DailyBooking } from "@/types/bookings";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +42,34 @@ export default async function DashboardPatientsPage({
       loadError = error instanceof Error ? error.message : "Unable to load patients.";
     }
   }
+
+  function bookingSession(booking: DailyBooking): string {
+    const session =
+      booking.sessionType ??
+      (typeof booking.session === "string"
+        ? booking.session
+        : booking.session?.type);
+    return session?.trim().toUpperCase() ?? "";
+  }
+
+  function isDone(booking: DailyBooking): boolean {
+    return (
+      (booking.status ?? "").trim().toUpperCase().replace(/[\s-]+/g, "_") ===
+      "DONE" || (booking.status ?? "").trim().toUpperCase().replace(/[\s-]+/g, "_") === "SERVING"
+    );
+  }
+
+  const doneCount = bookings.filter(
+    isDone,
+  ).length;
+  const morningBookings = bookings.filter(
+    (booking) => bookingSession(booking) === "MORNING",
+  );
+  const eveningBookings = bookings.filter(
+    (booking) => bookingSession(booking) === "EVENING",
+  );
+  const morningDone = morningBookings.filter(isDone).length;
+  const eveningDone = eveningBookings.filter(isDone).length;
 
   return (
     <main className="px-2 py-2 sm:px-8 sm:py-2 lg:px-2">
@@ -77,9 +110,41 @@ export default async function DashboardPatientsPage({
           </p>
         ) : (
           <section aria-label={`Patients for ${date}`}>
-            <p className="mt-6 text-sm text-slate-600">
-              {bookings.length} {bookings.length === 1 ? "booking" : "bookings"} for {date}
-            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  label: "Morning served and done",
+                  count: morningDone,
+                  total: morningBookings.length,
+                },
+                {
+                  label: "Evening served and done",
+                  count: eveningDone,
+                  total: eveningBookings.length,
+                },
+                {
+                  label: "Total served and done",
+                  count: doneCount,
+                  total: bookings.length,
+                },
+              ].map(({ label, count, total }) => (
+                <article
+                  key={label}
+                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                >
+                  <p className="text-sm font-medium text-slate-600">{label}</p>
+                  <p className="mt-2 text-3xl font-semibold text-slate-900">
+                    {count}
+                    <span className="text-sm font-normal text-slate-800">
+                      {" "}/ {total}
+                    </span>
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    for {formatClinicDate(date as any)}
+                  </p>
+                </article>
+              ))}
+            </div>
             <div className="mt-3 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full min-w-[760px] divide-y divide-slate-200 text-left">
                 <thead className="bg-slate-50 text-sm text-slate-600">

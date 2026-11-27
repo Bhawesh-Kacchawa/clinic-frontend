@@ -21,12 +21,12 @@ export default function Home() {
           >
             View sessions
           </Link>
-          <Link
+          {/* <Link
             href="/c/demo-dental/bookings"
             className="rounded-xl shadow-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
           >
             Today&apos;s clinic bookings
-          </Link>
+          </Link> */}
           <Link
             href="/login"
             className="rounded-xl shadow-lg border border-cyan-200 bg-cyan-50 px-5 py-3 text-sm font-semibold text-cyan-800 transition hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
