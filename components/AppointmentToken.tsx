@@ -59,20 +59,20 @@ export function AppointmentToken({
 
   return (
     <>
-      <dl className="mt-8 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left">
-        <div className="flex justify-between gap-4 px-5 py-4">
+      <dl className="mt-8 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left text-sm sm:text-base">
+        <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
           <dt className="text-slate-500">Patient</dt>
-          <dd className="text-right font-medium text-slate-900">{appointment.patientName}</dd>
+          <dd className="min-w-0 break-words text-right font-medium text-slate-900">{appointment.patientName}</dd>
         </div>
-        <div className="flex justify-between gap-4 px-5 py-4">
+        <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
           <dt className="text-slate-500">Appointment date</dt>
-          <dd className="text-right font-medium text-slate-900">
+          <dd className="min-w-0 break-words text-right font-medium text-slate-900">
             <time dateTime={appointment.date}>{formatClinicDate(appointment.date)}</time>
           </dd>
         </div>
-        <div className="flex justify-between gap-4 px-5 py-4">
+        <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
           <dt className="text-slate-500">Session</dt>
-          <dd className="text-right font-medium text-slate-900">
+          <dd className="min-w-0 break-words text-right font-medium text-slate-900">
             {appointment.sessionName} ({appointment.startTime.slice(0, 5)} - {appointment.endTime.slice(0, 5)})
           </dd>
         </div>

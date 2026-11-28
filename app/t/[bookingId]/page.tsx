@@ -23,8 +23,8 @@ export default async function BookingConfirmationPage({
   const tokenNumber = booking?.token ?? booking?.tokenNo ?? booking?.tokenNumber;
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-12">
-      <section className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-12">
+    <main className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
+      <section className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm sm:p-8">
         {loadError || !booking ? (
           <>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-rose-700">
@@ -42,7 +42,7 @@ export default async function BookingConfirmationPage({
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">
               Booking confirmed
             </p>
-            <h1 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+            <h1 className="mt-3 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
               Your token number
             </h1>
             <p
@@ -51,7 +51,7 @@ export default async function BookingConfirmationPage({
                   ? "Token number unavailable"
                   : `Token number ${tokenNumber}`
               }
-              className="mt-4 text-6xl font-bold tracking-tight text-cyan-800 sm:text-7xl"
+              className="mt-4 text-5xl font-bold tracking-tight text-cyan-800 sm:text-6xl"
             >
               {tokenNumber ?? "—"}
             </p>
@@ -64,51 +64,51 @@ export default async function BookingConfirmationPage({
               booking.nowServing != null ||
               booking.patientsAhead != null ||
               booking.estimatedTimeMinutes != null) && (
-              <dl className="mt-8 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left">
+              <dl className="mt-8 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left text-sm sm:text-base">
                 {booking.patientName && (
-                  <div className="flex justify-between gap-4 px-5 py-4">
+                  <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt className="text-slate-500">Patient</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dd className="min-w-0 break-words text-right font-medium text-slate-900">
                       {booking.patientName}
                     </dd>
                   </div>
                 )}
                 {booking.session && (
-                  <div className="flex justify-between gap-4 px-5 py-4">
+                  <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt className="text-slate-500">Session</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dd className="min-w-0 break-words text-right font-medium text-slate-900">
                       {booking.session}
                     </dd>
                   </div>
                 )}
                 {booking.status && (
-                  <div className="flex justify-between gap-4 px-5 py-4">
+                  <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt className="text-slate-500">Status</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dd className="min-w-0 break-words text-right font-medium text-slate-900">
                       {booking.status}
                     </dd>
                   </div>
                 )}
                 {booking.nowServing != null && (
-                  <div className="flex justify-between gap-4 px-5 py-4">
+                  <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt className="text-slate-500">Now serving</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dd className="min-w-0 break-words text-right font-medium text-slate-900">
                       {booking.nowServing}
                     </dd>
                   </div>
                 )}
                 {booking.patientsAhead != null && (
-                  <div className="flex justify-between gap-4 px-5 py-4">
+                  <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt className="text-slate-500">Patients ahead</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dd className="min-w-0 break-words text-right font-medium text-slate-900">
                       {booking.patientsAhead}
                     </dd>
                   </div>
                 )}
                 {booking.estimatedTimeMinutes != null && (
-                  <div className="flex justify-between gap-4 px-5 py-4">
+                  <div className="flex justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4">
                     <dt className="text-slate-500">Estimated wait</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dd className="min-w-0 break-words text-right font-medium text-slate-900">
                       {booking.estimatedTimeMinutes} min
                     </dd>
                   </div>
